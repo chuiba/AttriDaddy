@@ -6,12 +6,30 @@ namespace AttireDaddy
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("请输入装扮的编号");
-            String number = Console.ReadLine();
+            String number = string.Empty;
+            String interval = String.Empty;
 
 
-            Console.WriteLine("请输入刷新间隔，避免被服务器拒绝。单位为毫秒。");
-            String interval = Console.ReadLine();
+            if (args.Length == 2)
+            {
+                number = args[0];
+                interval = args[1];
+            }
+            else
+            {
+                Console.WriteLine("请输入装扮的编号");
+                number = Console.ReadLine();
+
+
+                Console.WriteLine("请输入刷新间隔，避免被服务器拒绝。单位为毫秒。");
+                interval = Console.ReadLine();
+            }
+
+            if (String.IsNullOrEmpty(number) || String.IsNullOrEmpty(interval))
+            {
+                Console.WriteLine("参数输入无效");
+                return;
+            }
 
 
             Server server = new Server();

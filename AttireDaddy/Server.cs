@@ -20,7 +20,8 @@ namespace AttireDaddy
             Bilibili bili = new Bilibili();
 
             
-            for (int i = 3700; i < 9999; ++i)
+                /*
+             for (int i = 3800; i < 9999; ++i)
             {
                 Surplus surplus = bili.getSurplus(i);
 
@@ -32,9 +33,9 @@ namespace AttireDaddy
                     Console.WriteLine($"id:{i}, {surplus.data.item.name}, 库存数量 {surplus.data.sale_surplus}");
                 }
             }
+                */
             
-
-
+           
 
             FileStream fs = new FileStream($"{number}.txt", FileMode.Append);
 
@@ -45,11 +46,14 @@ namespace AttireDaddy
                 if (recent == null || recent.data == null || recent.data.rank == null) 
                 {
                     Console.Write(".");
+                    Task.Delay(interval).Wait();
                     continue;
                 }
 
-                foreach (var item in recent.data.rank)
+                for (int i = recent.data.rank.Count - 1; i >= 0; --i)
                 {
+                    var item = recent.data.rank[i];
+
                     if (!rankItems.ContainsKey(item.number))
                     {
                         rankItems.Add(item.number, item);
