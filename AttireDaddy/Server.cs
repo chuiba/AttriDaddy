@@ -87,8 +87,8 @@ namespace AttireDaddy
                         var _number = _quantity - _surplus; 
 
 
-                        string str = $"id:{number}\t{_name}\t总库存：{_quantity}\t库存数量：{_surplus}\t最新计算编号：{_number}";
-                        Console.WriteLine(str);
+                        string str = $"id:{number} {_name}\t库存：{_quantity}\t销量：{_surplus}\t计算编号：{_number}\n";
+                        Console.Write(str);
 
                         byte[] info = new UTF8Encoding(true).GetBytes(str);
                         fs.Write(info, 0, info.Length);

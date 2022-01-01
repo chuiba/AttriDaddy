@@ -24,7 +24,6 @@ namespace AttireDaddy
                 Console.WriteLine("请输入统计类型：");
                 Console.WriteLine("0:按照购买信息统计（有购买者信息，但是最近已经出现高峰期无法获取的情况，以及基于特征的反爬策略）");
                 Console.WriteLine("1:按照库存计算（对于部分装扮比如星座系列，无法统计）");
-                Console.WriteLine("2:同时启用（可能造成访问频率高）");
                 useSurplus = int.Parse(Console.ReadLine());
                 
                 Console.WriteLine("请输入刷新间隔，避免被服务器拒绝。单位为毫秒。");
@@ -50,13 +49,6 @@ namespace AttireDaddy
                         Server server = new Server();
                         server.WriteSurplusFile(int.Parse(number), int.Parse(interval));
                     }                  
-                    break;
-                case 2:
-                    {
-                        Server server = new Server();
-                        server.WriteRecentFile(int.Parse(number), int.Parse(interval));
-                        server.WriteSurplusFile(int.Parse(number), int.Parse(interval));
-                    }                    
                     break;
                 default:
                     Console.WriteLine("无法识别的类型");
