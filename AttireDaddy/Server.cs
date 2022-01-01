@@ -14,66 +14,105 @@ namespace AttireDaddy
     {
         private SortedDictionary<int, RankItem> rankItems { get; set; } = new SortedDictionary<int, RankItem>();
 
-
-        public void Run(int number, int interval)
+        public void WriteRecentFile(int number, int interval)
         {
             Bilibili bili = new Bilibili();
 
-            
-                /*
-             for (int i = 3800; i < 9999; ++i)
-            {
-                Surplus surplus = bili.getSurplus(i);
-
-                // 防止412访问拦截
-                Task.Delay(100).Wait();
-
-                if (surplus != null && surplus.data != null && !String.IsNullOrEmpty(surplus.data.item.name))
-                {
-                    Console.WriteLine($"id:{i}, {surplus.data.item.name}, 库存数量 {surplus.data.sale_surplus}");
-                }
-            }
-                */
-            
-           
-
             FileStream fs = new FileStream($"{number}.txt", FileMode.Append);
 
-            while (true)
+            try 
             {
-                Recent recent = bili.getRecent(number);
-
-                if (recent == null || recent.data == null || recent.data.rank == null) 
+                while (true)
                 {
-                    Console.Write(".");
-                    Task.Delay(interval).Wait();
-                    continue;
-                }
+                    Recent recent = bili.getRecent(number);
 
-                for (int i = recent.data.rank.Count - 1; i >= 0; --i)
-                {
-                    var item = recent.data.rank[i];
-
-                    if (!rankItems.ContainsKey(item.number))
+                    if (recent == null || recent.data == null || recent.data.rank == null)
                     {
-                        rankItems.Add(item.number, item);
+                        Console.Write(".");
+                        Task.Delay(interval).Wait();
+                        continue;
+                    }
 
-                        string str = "\n";
-                        str += $"{item.number}\tuid:{item.mid}\t{item.nickname}";
+                    for (int i = recent.data.rank.Count - 1; i >= 0; --i)
+                    {
+                        var item = recent.data.rank[i];
 
-                        Console.Write(str);
+                        if (!rankItems.ContainsKey(item.number))
+                        {
+                            rankItems.Add(item.number, item);
+
+                            string str = "\n";
+                            str += $"{item.number}\tuid:{item.mid}\t{item.nickname}";
+
+                            Console.Write(str);
+
+                            byte[] info = new UTF8Encoding(true).GetBytes(str);
+                            fs.Write(info, 0, info.Length);
+                        }
+                    }
+
+                    fs.Flush();
+
+                    // 防止412访问拦截, 等待100ms
+                    Task.Delay(interval).Wait();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
+
+        public void WriteSurplusFile(int number, int interval)
+        {
+            Bilibili bili = new Bilibili();
+
+            FileStream fs = new FileStream($"{number}.surplus.txt", FileMode.Append);
+
+            try
+            {
+                while (true)
+                {
+                    Surplus surplus = bili.getSurplus(number);
+
+                    if (surplus != null && surplus.data != null && !String.IsNullOrEmpty(surplus.data.item.name))
+                    {
+                        var _name = surplus.data.item.name;
+                        var _quantity = surplus.data.item.properties.sale_quantity;
+                        var _surplus = surplus.data.sale_surplus;
+                        var _number = _quantity - _surplus; 
+
+
+                        string str = $"id:{number}\t{_name}\t总库存：{_quantity}\t库存数量：{_surplus}\t最新计算编号：{_number}";
+                        Console.WriteLine(str);
 
                         byte[] info = new UTF8Encoding(true).GetBytes(str);
                         fs.Write(info, 0, info.Length);
                     }
+                    else
+                    {
+                        Console.WriteLine("无法获取装扮信息，请检查");
+                    }
+
+                    fs.Flush();
+
+                    // 防止412访问拦截, 等待100ms
+                    Task.Delay(interval).Wait();
                 }
-
-                fs.Flush();
-
-                // 防止412访问拦截, 等待100ms
-                Task.Delay(interval).Wait();
+               
             }
-            fs.Close();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                fs.Close();
+            }
         }
     }
 }

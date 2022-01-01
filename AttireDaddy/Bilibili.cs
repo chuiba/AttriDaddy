@@ -913,6 +913,8 @@ namespace AttireDaddy
         /// 
         /// </summary>
         public string image_preview { get; set; }
+
+        public int sale_quantity { get; set; }
     }
 
     public class ThumbupItem
@@ -1152,6 +1154,10 @@ namespace AttireDaddy
     {
         private RestClient client;
 
+
+
+
+
         public Surplus getSurplus(int id)
         {
             try
@@ -1173,6 +1179,8 @@ namespace AttireDaddy
 
             return null;
         }
+
+       
 
         public Recent getRecent(int id)
         {
